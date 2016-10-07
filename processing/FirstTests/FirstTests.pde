@@ -23,6 +23,11 @@ float[] x = new float[4];
 float[] y = new float[4];
 float[] ang = new float[3];
 float segLength = 50;
+float winkel2 = 0.0;
+
+// timer Variables
+int timer;
+int wait = 1000;
 
 void setup() {
   size(640, 360);
@@ -37,9 +42,11 @@ void setup() {
   schnitt = new PVector();
   
   // Create the font
-  printArray(PFont.list());
+  //printArray(PFont.list());
   f = createFont("SourceCodePro-Regular.ttf", 12);
   textFont(f);
+  
+  timer = millis();
 }
 
 void draw() {
@@ -60,6 +67,7 @@ void draw() {
   //dragSegment(1, x[0], y[0]);
   
   ang[2] = map(mouseX, 0, 640, -PI, PI);
+  wait = int(map(mouseY, 0, 360, 200, 2000));
   k1.x = 160 + cos(ang[2]) * r1;
   k1.y = 80 + sin(ang[2]) * r1;
   x[2] = 160 + cos(ang[2]) * r1;
@@ -72,13 +80,18 @@ void draw() {
   ellipse(k1.x, k1.y, r1 * 2, r1 * 2);
   strokeWeight(20.0);
   
-  segment(310, 80, QUARTER_PI, 0, r2);
+  if(millis() - timer >= wait){
+    winkel2 += 0.1;
+    timer = millis();
+  }
+  
+  segment(310, 80, winkel2, 0, r2);
   stroke(0, 255, 0, 100);
   strokeWeight(1.0);
   noFill();
   
-  k2.x = 310 + cos(QUARTER_PI) * r2;
-  k2.y = 80 + sin(QUARTER_PI) * r2;
+  k2.x = 310 + cos(winkel2) * r2;
+  k2.y = 80 + sin(winkel2) * r2;
   ellipse(k2.x, k2.y, r2 * 2, r2 * 2);
   
   

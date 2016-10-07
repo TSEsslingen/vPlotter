@@ -1,0 +1,10 @@
+Aufgaben für die Realisierung des Projekts
+
+1. H Schaltplan für raspberry shield zeichnen
+2. H raspberry shield auf Lochrasterplatine aufbauen
+3. H shield testen
+4. H Brett für die Schrittmotoren vorbereiten und bestücken
+5. H Verkabelung von raspberry mit den Schrittmotoren
+6. H die Schenkel in Vektor Grafik malen und auslasern
+7. S processing Untersuchung des Konzepts
+8. S 
