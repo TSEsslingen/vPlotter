@@ -7,4 +7,6 @@ Aufgaben für die Realisierung des Projekts
 5. H Verkabelung von raspberry mit den Schrittmotoren
 6. H die Schenkel in Vektor Grafik malen und auslasern
 7. S processing Untersuchung des Konzepts
-8. S 
+8. S python code für die Steuerung der Motoren
+9. S python code für die Analyse eines Bildes
+10. S python code für die Rasterung eines Bildes und die Umsetzung in G-Code
