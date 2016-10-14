@@ -7,6 +7,8 @@ M1 = PVector(160, 80)
 M2 = PVector(480, 80)
 
 alength = 100
+z = 0
+
 # left arm
 Aleft = {'1': {'pos': M1, 'angle': PI, 'color': '0x64FF0000'}, '2': {'pos': PVector(10, 10), 'angle': PI, 'color': '0x6400FF00'}}
 Aright = {'1': {'pos': M2, 'angle': PI, 'color': '#FF0000'}, '2': {'pos': PVector(10, 10), 'angle': PI, 'color': '#00FF00'}}
@@ -24,6 +26,8 @@ def setup():
 
 
 def draw():
+    global z
+    
     background(0)
     fill(255, 0, 0)
     text("Hello", 10, 20)
@@ -32,7 +36,12 @@ def draw():
     ellipse(M1.x, M1.y, 10 ,10)
     ellipse(M2.x, M2.y, 10 ,10)
     
-    dragSegment(Aleft['1'], mouseX, mouseY)
+    #dragSegment(Aleft['1'], mouseX, mouseY)
+    Aleft['1']['angle'] = PI / 100 * z
+    if z > 99:
+        z = 0
+    else:
+        z = z + 1
     dragSegment(Aright['1'], mouseX, mouseY)
     adjustArm(Aleft)
     adjustArm(Aright)
