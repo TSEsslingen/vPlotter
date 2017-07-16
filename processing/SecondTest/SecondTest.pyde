@@ -3,15 +3,16 @@
 # build the two arms and find the possible angle values for the v-plotter
 
 # motor positions
-M1 = PVector(160, 80)
-M2 = PVector(480, 80)
+M1 = PVector(160, 180)
+M2 = PVector(480, 180)
 
 alength = 100
-z = 0
+zl = -99
+zr = -99
 
 # left arm
-Aleft = {'1': {'pos': M1, 'angle': PI, 'color': '0x64FF0000'}, '2': {'pos': PVector(10, 10), 'angle': PI, 'color': '0x6400FF00'}}
-Aright = {'1': {'pos': M2, 'angle': PI, 'color': '#FF0000'}, '2': {'pos': PVector(10, 10), 'angle': PI, 'color': '#00FF00'}}
+Aleft = {'1': {'pos': M1, 'angle': PI, 'color': '0x64FF0000', 'len': 100}, '2': {'pos': PVector(10, 10), 'angle': PI, 'color': '0x6400FF00', 'len': 100}}
+Aright = {'1': {'pos': M2, 'angle': PI, 'color': '#FF0000', 'len': 100}, '2': {'pos': PVector(10, 10), 'angle': PI, 'color': '#00FF00', 'len': 100}}
 
 matrix = [[0 for x in range(360)] for y in range(640)]
 
@@ -26,25 +27,31 @@ def setup():
 
 
 def draw():
-    global z
+    global zl
+    global zr
     
     background(0)
     fill(255, 0, 0)
     text("Hello", 10, 20)
+    text("Links: {}".format(zl), 10, 50)
+    text("Rechts: {}".format(zr), 10, 60)
     stroke('0x64FFFF44')
     noFill()
     ellipse(M1.x, M1.y, 10 ,10)
     ellipse(M2.x, M2.y, 10 ,10)
     
     #dragSegment(Aleft['1'], mouseX, mouseY)
-    Aleft['1']['angle'] = PI / 100 * z
-    if z > 99:
-        z = 0
+    Aleft['1']['angle'] = PI / 100 * zl
+    Aright['1']['angle'] = PI / 100 * zr
+    if zl > 99:
+        zl = -99
+        zr = zr + 1
     else:
-        z = z + 1
-    dragSegment(Aright['1'], mouseX, mouseY)
-    adjustArm(Aleft)
-    adjustArm(Aright)
+        zl = zl + 1
+    #dragSegment(Aright['1'], mouseX, mouseY)
+    adjustArm(Aleft, Aright)
+    adjustArm(Aright, Aleft)
+    adjustLength(Aleft, Aright)
     
     drawArm(Aleft)
     drawArm(Aright)
@@ -54,15 +61,34 @@ def draw():
     
     if(intersect):
         text("Schnitt", 10, 35)
-        matrix[int(p1.x)][int(p1.y)] = 1
+        #matrix[int(p1.x)][int(p1.y)] = 1
     
     drawMatrix()
 
 
 
-def adjustArm(arm):
-    arm['2']['pos'].x = arm['1']['pos'].x + cos(arm['1']['angle']) * alength
-    arm['2']['pos'].y = arm['1']['pos'].y + sin(arm['1']['angle']) * alength
+def adjustArm(arm1, arm2):
+    arm1['2']['pos'].x = arm1['1']['pos'].x + cos(arm1['1']['angle']) * arm1['1']['len']
+    arm1['2']['pos'].y = arm1['1']['pos'].y + sin(arm1['1']['angle']) * arm1['1']['len']
+    dragSegment(arm1['2'], arm2['2']['pos'].x, arm2['2']['pos'].y)
+
+
+def adjustLength(arm1, arm2):
+    Pr = PVector()
+    Pl = PVector()
+    
+    Pl.x = arm1['2']['pos'].x + cos(arm1['2']['angle']) * arm1['2']['len']
+    Pl.y = arm1['2']['pos'].y + sin(arm1['2']['angle']) * arm1['2']['len']
+    
+    Pr.x = arm2['2']['pos'].x + cos(arm2['2']['angle']) * arm2['2']['len']
+    Pr.y = arm2['2']['pos'].y + sin(arm2['2']['angle']) * arm2['2']['len']
+    
+    diff = PVector.sub(Pl, Pr)
+    mLength = diff.mag()
+    line(Pr.x, Pr.y, Pl.x, Pl.y)
+    
+    if mLength <= 2.0:
+        matrix[int(Pl.x)][int(Pl.y)] = 1
 
 
 def calcIntersect(k1, k2, r1, r2):
@@ -101,7 +127,7 @@ def calcIntersect(k1, k2, r1, r2):
 
 def drawArm(arm):
     segment(arm['1'], True)
-    segment(arm['2'], False)
+    segment(arm['2'], True)
     
 
 def dragSegment(arm, x, y):
@@ -119,12 +145,13 @@ def segment(arm, drawMode):
     rotate(arm['angle'])
     stroke(arm['color'])
     if( drawMode ):
-        line(0, 0, alength, 0)
-        ellipse(alength, 0, 10, 10)
+        strokeWeight(1.0)
+        line(0, 0, arm['len'], 0)
+        ellipse(arm['len'], 0, 10, 10)
     else:
         strokeWeight(1.0);
         noFill();
-        ellipse(0, 0, alength * 2, alength * 2)
+        ellipse(0, 0, arm['len'] * 2, arm['len'] * 2)
     popMatrix()
 
 
